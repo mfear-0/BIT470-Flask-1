@@ -19,8 +19,7 @@ from src.migrate_db import init_db
 import src.const
 from flask import g
 from src.db import get_db
-from resources.auth import Login
-
+from resources.auth import Login, Logout, Token
 app = Flask(__name__)
 api = Api(app)
 app.config['SECRET_KEY'] = 'somesecretkeything'
@@ -56,12 +55,15 @@ api.add_resource(HelloWorld, '/')
 api.add_resource(User, '/users/<string:user_name>', '/users/create')
 api.add_resource(Users, '/users')
 api.add_resource(Login, '/login')
+api.add_resource(Logout,'/logout')
+api.add_resource(Token,'/token')
 
 @app.teardown_appcontext
 def close_connection(exception):
     db = getattr(g, '_database', None)
     if db is not None:
         db.close()
+
 
 if __name__ == '__main__':
     app.run(debug=True)

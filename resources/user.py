@@ -19,6 +19,8 @@ class User(Resource):
         data = parser.parse_args()
         un = data['username']
         #pw = data['password']
+        if get_db().cursor().execute(f'SELECT id FROM users WHERE username = "{un}"').fetchone():
+            return {'message': f'User {un} already exists'}
         hpw = generate_password_hash(data['password'], method='sha256')
         get_db().cursor().execute(f'INSERT INTO users(id, username, password) VALUES({hash(un)}, "{un}", "{hpw}")')
         get_db().commit()
