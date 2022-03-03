@@ -16,12 +16,14 @@ from resources.user import Users
 
 parser = reqparse.RequestParser()
 
+
 # Arica: Does this need to be implemented? 
 class Signup(Resource):
 
     def post(self, credentials):
 
         return 'signing up'
+
 
 # TODO: Might need to program what should happen if a user calls login while
 # they are already logged in.
@@ -51,9 +53,9 @@ class Login(Resource):
             message = jsonify(error = 'Password is a required field.')
             return make_response(message, 400) 
 
-        # Arica: Checks to see if the username and/or password are typed incorrectly.
-        if not get_db().cursor().execute(f'SELECT id FROM users WHERE username = "{un}"').fetchone() or not get_db().cursor().execute(f'SELECT id FROM users WHERE password = "{pw}"').fetchone():
-            message = jsonify(error = 'Incorrect username or password submitted. Please check if the username or password is typed correctly.')
+        # Arica: Checks to see if the username is typed incorrectly.
+        if not get_db().cursor().execute(f'SELECT id FROM users WHERE username = "{un}"').fetchone():
+            message = jsonify(error = 'Incorrect username submitted. Please check if the username is typed correctly.')
             return make_response(message, 400)
 
         hpw = generate_password_hash(data['password'], method='sha256')
@@ -83,8 +85,13 @@ class Login(Resource):
                 return make_response(message, 200)
                 # Original code: 
                 # return jsonify({'token': token}, 201)
-                # Originally commented out:                # access_token = create_access_token(identity=un)
+                # Originally commented out: 
+                # access_token = create_access_token(identity=un)
                 # return jsonify({'token': access_token}, 200)
+
+            # Arica: Otherwise, the password was typed incorrectly.
+            message = jsonify(error = 'Incorrect password submitted. Please check if the password is typed correctly.')
+            return make_response(message, 400)
 
             get_db().close()
 
@@ -94,6 +101,9 @@ class Login(Resource):
             return make_response(message, 500)
             # Arica: Leaving this one just in case:
             # return make_response(f'could not verify. stored: "{respw}"  typed: "{hpw}"',  401, {'Authentication': '"login required"'})
+
+
+#TODO: For the future, we might want adjust the logout to check against the login token and not the username. 
 
 class Logout(Resource):
 
@@ -137,6 +147,7 @@ class Logout(Resource):
             return make_response(message, 500)
             # Arica: Leaving this one just in case:
             # return make_response(f'was not able to log you out with id: "{res[0]}"', 400, {'info': '"you might have log out already"'})
+
 
 class Token(Resource):
 
