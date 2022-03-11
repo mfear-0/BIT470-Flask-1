@@ -22,6 +22,7 @@ import src.const
 from flask import g
 from src.db import get_db
 from resources.auth import Login, Logout, Token
+from resources.rooms import Room, Rooms
 
 # Arica: Making the Flask application.
 app = Flask(__name__)
@@ -67,6 +68,8 @@ api.add_resource(Users, '/users')
 api.add_resource(Login, '/login')
 api.add_resource(Logout,'/logout')
 api.add_resource(Token,'/token')
+api.add_resource(Room, '/rooms/<string:room_no>', '/rooms/create')
+api.add_resource(Rooms, '/rooms')
 
 @app.teardown_appcontext
 def close_connection(exception):
