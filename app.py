@@ -14,7 +14,7 @@ import uuid
 import jwt
 import datetime
 from flask_restful import Resource, Api
-from resources.user import User, Users
+from resources.user import User, Users, Staff, AllStaff
 import sqlite3
 from os.path import exists
 from src.migrate_db import init_db
@@ -63,13 +63,15 @@ class HelloWorld(Resource):
 #    return decorator
 
 api.add_resource(HelloWorld, '/')
-api.add_resource(User, '/users/<string:user_name>', '/users/create')
+api.add_resource(User, '/users/<string:user_name>', '/signup')
 api.add_resource(Users, '/users')
 api.add_resource(Login, '/login')
 api.add_resource(Logout,'/logout')
 api.add_resource(Token,'/token')
 api.add_resource(Room, '/rooms/<string:room_no>', '/rooms/create')
 api.add_resource(Rooms, '/rooms')
+api.add_resource(AllStaff, '/staff')
+api.add_resource(Staff, '/staff/<staffid>')
 
 @app.teardown_appcontext
 def close_connection(exception):

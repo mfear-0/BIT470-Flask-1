@@ -2,6 +2,7 @@
 # https://dev.to/imdhruv99/flask-user-authentication-with-jwt-2788
 
 from datetime import date
+from tkinter import INSERT
 from flask_restful import Resource, reqparse
 from flask import jsonify#, request, abort, g, url_for
 from src.db import get_db
@@ -23,13 +24,24 @@ class User(Resource):
 
         parser.add_argument('username')
         parser.add_argument('password')
+        parser.add_argument('staffname')
+        parser.add_argument('phonenumber')
+        parser.add_argument('email')
+        parser.add_argument('address')
         data = parser.parse_args()
         un = data['username']
+        stn = data['staffname']
+        phn = data['phonenumber']
+        em = data['email']
+        ad = data['address']
         #pw = data['password']
         if get_db().cursor().execute(f'SELECT id FROM users WHERE username = "{un}"').fetchone():
             return {'message': f'User {un} already exists'}
         hpw = generate_password_hash(data['password'], method='sha256')
         get_db().cursor().execute(f'INSERT INTO users(id, username, password) VALUES({hash(un)}, "{un}", "{hpw}")')
+        get_db().commit()
+        loginid = get_db().cursor().execute(f'SELECT id FROM users WHERE username = "{un}"').fetchone()
+        get_db().cursor().execute(f'INSERT INTO staff(id, staffname, phonenumber, email, address) VALUES({loginid[0]}, "{stn}" ,"{phn}", "{em}", "{ad}")')
         get_db().commit()
         get_db().close()
         return jsonify({'message': 'successfully signed up'})
@@ -39,6 +51,27 @@ class Users(Resource):
     def get(self):
         
         result = get_db().cursor().execute('SELECT * FROM users')
+        rows = result.fetchall()
+        get_db().close()
+        response = []
+        for row in rows:
+            response.append(dict(zip([c[0] for c in result.description], row)))
+        return response
+
+
+class Staff(Resource): 
+
+    def get(self, staffid):
+
+        result = get_db().cursor().execute(f'SELECT * FROM staff WHERE staffid={staffid}')
+        row = result.fetchone()
+        return dict(zip([c[0] for c in result.description], row))
+
+class AllStaff(Resource):
+
+    def get(self):
+        
+        result = get_db().cursor().execute('SELECT * FROM staff')
         rows = result.fetchall()
         get_db().close()
         response = []
