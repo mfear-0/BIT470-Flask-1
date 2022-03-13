@@ -67,6 +67,39 @@ class Staff(Resource):
         row = result.fetchone()
         return dict(zip([c[0] for c in result.description], row))
 
+    def put(self, staffid):
+        parser.add_argument('staffname')
+        parser.add_argument('phonenumber')
+        parser.add_argument('email')
+        parser.add_argument('address')
+        data = parser.parse_args()
+        stn = data['staffname']
+        phn = data['phonenumber']
+        em = data['email']
+        ad = data['address']
+        stname = get_db().cursor().execute(f'SELECT staffname FROM staff WHERE staffid={staffid}').fetchone()
+        if not stname[0] == stn and stn:
+            get_db().cursor().execute(f'UPDATE staff SET staffname="{stn}" WHERE staffid={staffid}')
+            get_db().commit()
+
+        phnumber = get_db().cursor().execute(f'SELECT phonenumber FROM staff WHERE staffid={staffid}').fetchone()
+        if not phnumber[0] == phn and phn:
+            get_db().cursor().execute(f'UPDATE staff SET phonenumber="{phn}" WHERE staffid={staffid}')
+            get_db().commit()
+
+        email = get_db().cursor().execute(f'SELECT email FROM staff WHERE staffid={staffid}').fetchone()
+        if not email[0] == em and em:
+            get_db().cursor().execute(f'UPDATE staff SET email="{em}" WHERE staffid={staffid}')
+            get_db().commit()
+
+        address = get_db().cursor().execute(f'SELECT address FROM staff WHERE staffid={staffid}').fetchone()
+        if not address[0] == ad and ad:
+            get_db().cursor().execute(f'UPDATE staff SET address="{ad}" WHERE staffid={staffid}')
+            get_db().commit()
+        result = get_db().cursor().execute(f'SELECT * FROM staff WHERE staffid={staffid}')
+        row = result.fetchone()
+        return dict(zip([c[0] for c in result.description], row))
+
 class AllStaff(Resource):
 
     def get(self):
