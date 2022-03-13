@@ -70,6 +70,8 @@ api.add_resource(Logout,'/logout')
 api.add_resource(Token,'/token')
 api.add_resource(Room, '/rooms/<string:room_no>', '/rooms/create')
 api.add_resource(Rooms, '/rooms')
+# TODO: Get all tasks.
+# TODO: Get one task.
 api.add_resource(AllStaff, '/staff')
 api.add_resource(Staff, '/staff/<staffid>')
 

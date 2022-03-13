@@ -9,5 +9,9 @@ def init_db():
     cur.execute('CREATE TABLE IF NOT EXISTS rooms(id INTEGER NOT NULL, roomnumber text PRIMARY KEY)')
     cur.execute('CREATE TABLE IF NOT EXISTS token(id INTEGER NOT NULL, tokenid text PRIMARY KEY)')
     cur.execute('CREATE TABLE IF NOT EXISTS staff(staffid INTEGER NOT NULL PRIMARY KEY, id INTERGER NOT NULL, staffname text, phonenumber text, email text, address text)')
+    
+    # Arica: The Tasks table and default ten tasks. See if you can make the id autoincrement?
+    cur.execute('CREATE TABLE IF NOT EXISTS tasks(taskid INTEGER NOT NULL PRIMARY KEY, taskname text)')
+    
     con.commit()
     con.close()
