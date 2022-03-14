@@ -55,6 +55,7 @@ class Login(Resource):
 
         # Arica: Checks to see if the username is typed incorrectly.
         if not get_db().cursor().execute(f'SELECT id FROM users WHERE username = "{un}"').fetchone():
+            get_db().close()
             message = jsonify(error = 'Incorrect username submitted. Please check if the username is typed correctly.')
             return make_response(message, 400)
 
@@ -89,11 +90,11 @@ class Login(Resource):
                 # access_token = create_access_token(identity=un)
                 # return jsonify({'token': access_token}, 200)
 
+            get_db().close()
+
             # Arica: Otherwise, the password was typed incorrectly.
             message = jsonify(error = 'Incorrect password submitted. Please check if the password is typed correctly.')
             return make_response(message, 400)
-
-            get_db().close()
 
         except:
 
@@ -120,6 +121,7 @@ class Logout(Resource):
         
         # Arica: Checks to see if the username is typed incorrectly.
         if not get_db().cursor().execute(f'SELECT id FROM users WHERE username = "{un}"').fetchone():
+            get_db().close()
             message = jsonify(error = 'Incorrect username submitted. Please check if the username is typed correctly.')
             return make_response(message, 400) 
         
@@ -130,16 +132,16 @@ class Logout(Resource):
 
             # Arica: Checks to see if the token has already been deleted (i.e. the user has already logged out).
             if validToken is None:
+                get_db().close()
                 message = jsonify(message = 'You have already logged out.')
                 return make_response(message, 404)
             
             if validToken:
                 get_db().cursor().execute(f'DELETE FROM token WHERE id = {res[0]}')
                 get_db().commit()
+                get_db().close()
                 message = jsonify(message = 'Successfully logged out. Goodbye!')
                 return make_response(message, 200)        
-
-            get_db().close()
 
         except:
 

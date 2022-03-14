@@ -23,6 +23,8 @@ from flask import g
 from src.db import get_db
 from resources.auth import Login, Logout, Token
 from resources.rooms import Room, Rooms
+# Arica: Import the Tasks and Task classes from the tasks.py file.
+from resources.tasks import Tasks, Task
 
 # Arica: Making the Flask application.
 app = Flask(__name__)
@@ -72,6 +74,9 @@ api.add_resource(Room, '/rooms/<string:room_no>', '/rooms/create')
 api.add_resource(Rooms, '/rooms')
 api.add_resource(AllStaff, '/staff')
 api.add_resource(Staff, '/staff/<staffid>')
+# Arica: The URLs for the tasks (no ending forward slash).
+api.add_resource(Tasks, '/tasks')
+api.add_resource(Task, '/tasks/<taskid>')
 
 @app.teardown_appcontext
 def close_connection(exception):
