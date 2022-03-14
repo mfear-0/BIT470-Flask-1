@@ -59,15 +59,20 @@ class Tasks(Resource):
                 return make_response(message, 400)
 
             # Arica: Checks to see if the task the client wants to add already exists.
+
             # I have been debating about whether this should be included or not. On the one hand, this could prevent
             # inserting multiples of the same task, particularly since I did not set a UNIQUE constraint on the
             # Task Name field when setting up the Tasks table. On the other hand, if the user runs a PUT request, 
             # there is currently nothing to stop them from editing the task to be exactly the same as another one. 
-            # I chose to leave this section of code for now and see what the group thinks.
-            if get_db().cursor().execute(f'SELECT taskid FROM tasks WHERE taskname = "{taskname}"').fetchone():
-                get_db().close()
-                message = jsonify(error = f'The task \'{taskname}\' already exists. Please add a different task.')
-                return make_response(message, 400)
+
+            # After some consideration, I decided to comment this out, because it would likely be too complicated
+            # to check for Task Name duplicates when someone could change one letter and that would be counted as
+            # unique. For something like the Room Number, though, that should have a UNIQUE constraint.
+
+            # if get_db().cursor().execute(f'SELECT taskid FROM tasks WHERE taskname = "{taskname}"').fetchone():
+            #     get_db().close()
+            #     message = jsonify(error = f'The task \'{taskname}\' already exists. Please add a different task.')
+            #     return make_response(message, 400)
 
             # Arica: Adds the task to the database and returns the HTTP code 201 Created. 
             # Note that the Task ID is not needed because it is autoincremented.
