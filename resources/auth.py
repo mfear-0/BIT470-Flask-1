@@ -18,11 +18,11 @@ parser = reqparse.RequestParser()
 
 
 # Arica: Does this need to be implemented? 
-class Signup(Resource):
+# class Signup(Resource):
 
-    def post(self, credentials):
+#     def post(self, credentials):
 
-        return 'signing up'
+#         return 'signing up'
 
 
 # TODO: Might need to program what should happen if a user calls login while
@@ -60,7 +60,7 @@ class Login(Resource):
             return make_response(message, 400)
 
         hpw = generate_password_hash(data['password'], method='sha256')
-
+        
         try:
 
             res = get_db().cursor().execute(f'SELECT id FROM users WHERE username = "{un}"').fetchone()
@@ -76,19 +76,26 @@ class Login(Resource):
             con.close()
 
             if check_password_hash(respw[0], pw):
-                token = jwt.encode({'id' : res[0], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=45)}, "somesecretkeything", "HS256")
-                get_db().cursor().execute(f'INSERT INTO token(id, tokenid) VALUES({res[0]},"{token}")')
-                get_db().commit()
-                # Arica: Returns a successful login message. I removed the token to test it out.
-                # When the token is not returned, I can log in. If it returns the token, I get a 500 error message.
-                # Does the token need to be returned? Does the user need to see it?
-                message = jsonify(message = 'Successfully logged in. Welcome!')
-                return make_response(message, 200)
-                # Original code: 
-                # return jsonify({'token': token}, 201)
-                # Originally commented out: 
-                # access_token = create_access_token(identity=un)
-                # return jsonify({'token': access_token}, 200)
+                # try block to catch users already logged in.
+                try:
+                    isloggedin = get_db().cursor().execute(f'SELECT id FROM token WHERE id = "{res[0]}"').fetchone()
+                    if not isloggedin[0] is None:
+                        message = jsonify(message = 'User is already logged in.')
+                        return make_response(message, 400)
+                except:
+                    token = jwt.encode({'id' : res[0], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=45)}, "somesecretkeything", "HS256")
+                    get_db().cursor().execute(f'INSERT INTO token(id, tokenid) VALUES({res[0]},"{token}")')
+                    get_db().commit()
+                    # Arica: Returns a successful login message. I removed the token to test it out.
+                    # When the token is not returned, I can log in. If it returns the token, I get a 500 error message.
+                    # Does the token need to be returned? Does the user need to see it?
+                    message = jsonify(message = 'Successfully logged in. Welcome!')
+                    return make_response(message, 200)
+                    # Original code: 
+                    # return jsonify({'token': token}, 201)
+                    # Originally commented out: 
+                    # access_token = create_access_token(identity=un)
+                    # return jsonify({'token': access_token}, 200)
 
             get_db().close()
 
