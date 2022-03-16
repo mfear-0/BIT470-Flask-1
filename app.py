@@ -73,7 +73,7 @@ class HelloWorld(Resource):
 # Could comment out Logout, but I left it for now so that I could check if the tokens are being deleted.
 api.add_resource(HelloWorld, '/')
 api.add_resource(User, '/users/<string:user_name>', '/signup')
-api.add_resource(Users, '/users', 'users/<string:user_name>')
+api.add_resource(Users, '/users', '/users/<string:user_name>')
 api.add_resource(Login, '/login')
 api.add_resource(Logout,'/logout')
 api.add_resource(Token,'/token')
