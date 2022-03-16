@@ -45,7 +45,7 @@ class Tasks(Resource):
             return make_response(message, 500)
 
 
-    @jwt_required
+    @jwt_required()
     def post(self):
 
         try:
@@ -120,7 +120,7 @@ class Task(Resource):
             return make_response(message, 500)
 
 
-    @jwt_required
+    @jwt_required()
     def put(self, taskid):
 
         try:
@@ -160,7 +160,7 @@ class Task(Resource):
             return make_response(message, 500)
     
 
-    @jwt_required
+    @jwt_required()
     def delete(self, taskid):
 
         try:

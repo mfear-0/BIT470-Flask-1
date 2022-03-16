@@ -68,7 +68,7 @@ class User(Resource):
         return jsonify({'message': 'successfully signed up'})
 
     
-    @jwt_required
+    @jwt_required()
     def put(self, user_name):
         try:
             parser.add_argument('username')
@@ -114,7 +114,7 @@ class User(Resource):
             return {'message': 'Something went wrong trying to update user.'}
     
     
-    @jwt_required
+    @jwt_required()
     def delete(self, user_name):
         try:
             if not get_db().cursor().execute(f'SELECT * FROM users WHERE username="{user_name}"').fetchone():
@@ -165,7 +165,7 @@ class Staff(Resource):
         row = result.fetchone()
         return dict(zip([c[0] for c in result.description], row))
 
-    @jwt_required
+    @jwt_required()
     def put(self, staffid):
         parser.add_argument('staffname')
         parser.add_argument('phonenumber')
@@ -199,7 +199,7 @@ class Staff(Resource):
         row = result.fetchone()
         return dict(zip([c[0] for c in result.description], row))
 
-    @jwt_required
+    @jwt_required()
     def delete(self, staffid):
 
         try:

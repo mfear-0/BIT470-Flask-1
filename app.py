@@ -72,8 +72,8 @@ class HelloWorld(Resource):
 # Arica: Added an "s" to the end of every endpoint for consistency.
 # Could comment out Logout, but I left it for now so that I could check if the tokens are being deleted.
 api.add_resource(HelloWorld, '/')
-api.add_resource(User, '/users/<user_name>', '/signup')
-api.add_resource(Users, '/users', '/users/<string:user_name>')
+api.add_resource(User, '/users/<string:user_name>', '/signup')
+api.add_resource(Users, '/users')
 api.add_resource(Login, '/login')
 api.add_resource(Logout,'/logout')
 api.add_resource(Token,'/token')

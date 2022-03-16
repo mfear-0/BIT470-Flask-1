@@ -30,7 +30,7 @@ class Assignments(Resource):
             message = jsonify(error = 'Something went wrong when getting all the assignments. Please try again.')
             return make_response(message, 500)
 
-    @jwt_required
+    @jwt_required()
     def post(self):   
 
         try:
@@ -93,7 +93,7 @@ class Assignment(Resource):
             return make_response(message, 500)
 
 
-    @jwt_required
+    @jwt_required()
     def put(self, assignid):
 
         try:
@@ -147,7 +147,7 @@ class Assignment(Resource):
             return make_response(message, 500)
     
 
-    @jwt_required
+    @jwt_required()
     def delete(self, assignid):
 
         try:
