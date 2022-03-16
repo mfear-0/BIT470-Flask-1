@@ -135,7 +135,7 @@ class Assignment(Resource):
                 get_db().commit()
 
             if st:
-                get_db().cursor().execute(f'UPDATE assignments SET status={st} WHERE id={assignid}')
+                get_db().cursor().execute(f'UPDATE assignments SET status="{st}" WHERE id={assignid}')
                 get_db().commit()
 
             result = get_db().cursor().execute(f'SELECT * FROM assignments WHERE id={assignid}')
