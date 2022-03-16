@@ -4,6 +4,7 @@
 # https://pythonexamples.org/python-tuple-to-string/
 
 from datetime import date
+from flask_jwt_extended import create_access_token, JWTManager, jwt_required
 from flask_restful import Resource, reqparse
 from flask import Flask, jsonify, make_response, request
 from src.db import get_db
@@ -44,6 +45,7 @@ class Tasks(Resource):
             return make_response(message, 500)
 
 
+    @jwt_required
     def post(self):
 
         try:
@@ -118,6 +120,7 @@ class Task(Resource):
             return make_response(message, 500)
 
 
+    @jwt_required
     def put(self, taskid):
 
         try:
@@ -157,6 +160,7 @@ class Task(Resource):
             return make_response(message, 500)
     
 
+    @jwt_required
     def delete(self, taskid):
 
         try:

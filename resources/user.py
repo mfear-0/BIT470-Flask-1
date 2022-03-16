@@ -3,6 +3,7 @@
 
 from datetime import date
 from tkinter import INSERT
+from flask_jwt_extended import create_access_token, JWTManager, jwt_required
 from flask_restful import Resource, reqparse
 from flask import Flask, jsonify, make_response, request
 from src.db import get_db
@@ -18,11 +19,12 @@ class User(Resource):
 
     def get(self, user_name):
 
-        #TODO: Check for empty input and an input that does not exist. Finalize the error messages.
-
         result = get_db().cursor().execute(f'SELECT * FROM users WHERE username="{user_name}"')
         row = result.fetchone()
-        return dict(zip([c[0] for c in result.description], row))
+        if row is None:
+            return {'message': 'User with this username does not exist.'}
+        else:
+            return dict(zip([c[0] for c in result.description], row))
 
     def post(self):
 
@@ -40,7 +42,20 @@ class User(Resource):
         phn = data['phonenumber']
         em = data['email']
         ad = data['address']
-        #pw = data['password']
+
+        if data['username'] is None:
+            return {'message': 'Please include a username.'}
+        if data['staffname'] is None:
+            return {'message': 'Please include the staff\'s name.'}
+        if data['phonenumber'] is None:
+            return {'message': 'Please include a phone number.'}
+        if data['email'] is None:
+            return {'message': 'Please include an email.'}
+        if data['address'] is None:
+            return {'message': 'Please include an address.'}
+        if data['password'] is None:
+            return {'message': 'Please include a password.'}
+
         if get_db().cursor().execute(f'SELECT id FROM users WHERE username = "{un}"').fetchone():
             return {'message': f'User {un} already exists'}
         hpw = generate_password_hash(data['password'], method='sha256')
@@ -51,6 +66,79 @@ class User(Resource):
         get_db().commit()
         get_db().close()
         return jsonify({'message': 'successfully signed up'})
+
+    
+    @jwt_required
+    def put(self, user_name):
+        try:
+            parser.add_argument('username')
+            parser.add_argument('password')
+            parser.add_argument('staffname')
+            parser.add_argument('phonenumber')
+            parser.add_argument('email')
+            parser.add_argument('address')
+            data = parser.parse_args()
+            un = data['username']
+            stn = data['staffname']
+            phn = data['phonenumber']
+            em = data['email']
+            ad = data['address']
+            userid = get_db().cursor().execute(f'SELECT id FROM users WHERE username="{user_name}"').fetchone()
+            userid2 = int(userid[0])
+
+            if stn:
+                get_db().cursor().execute(f'UPDATE staff SET staffname="{stn}" WHERE id={userid2}')
+                get_db().commit()
+
+            if phn:
+                get_db().cursor().execute(f'UPDATE staff SET phonenumber="{phn}" WHERE id={userid2}')
+                get_db().commit()
+            
+            if em:
+                get_db().cursor().execute(f'UPDATE staff SET email="{em}" WHERE id={userid2}')
+                get_db().commit()
+            
+            if ad:
+                get_db().cursor().execute(f'UPDATE staff SET address="{ad}" WHERE id={userid2}')
+                get_db().commit()            
+
+            if un:
+                uncheck = get_db().cursor().execute(f'SELECT * FROM users WHERE username="{un}"').fetchone()
+                if uncheck:
+                    return {'message': 'User of that username already exists.'}
+                else:
+                    get_db().cursor().execute(f'UPDATE users SET username="{un}" WHERE id={userid2}')
+                    get_db().commit()
+            return {'message': 'Successfully updated user and staff tables.'}
+        except:
+            return {'message': 'Something went wrong trying to update user.'}
+    
+    
+    @jwt_required
+    def delete(self, user_name):
+        try:
+            if not get_db().cursor().execute(f'SELECT * FROM users WHERE username="{user_name}"').fetchone():
+                message = jsonify(error = 'Could not find the specified user.')
+                return make_response(message, 404)
+            
+
+            userid = get_db().cursor().execute(f'SELECT id FROM users WHERE username="{user_name}"').fetchone()
+            userid2 = int(userid[0])
+            
+            get_db().cursor().execute(f'DELETE FROM staff WHERE id = {userid2}')
+            get_db().commit()
+            get_db().cursor().execute(f'DELETE FROM users WHERE id = {userid2}')
+            get_db().commit()
+            if get_db().cursor().execute(f'SELECT * FROM token WHERE id={userid2}').fetchone():
+                get_db().cursor().execute(f'DELETE FROM token WHERE id = {userid2}')
+                get_db().commit()
+            get_db().close()
+            message = jsonify(message = f'The user \'{user_name}\' has been successfully deleted.')
+            return make_response(message, 200)
+        except:
+            message = jsonify(error = 'Something went wrong when deleting the user. Please try again.')
+            return make_response(message, 500)
+
 
 class Users(Resource):
 
@@ -77,6 +165,7 @@ class Staff(Resource):
         row = result.fetchone()
         return dict(zip([c[0] for c in result.description], row))
 
+    @jwt_required
     def put(self, staffid):
         parser.add_argument('staffname')
         parser.add_argument('phonenumber')
@@ -110,6 +199,7 @@ class Staff(Resource):
         row = result.fetchone()
         return dict(zip([c[0] for c in result.description], row))
 
+    @jwt_required
     def delete(self, staffid):
 
         try:

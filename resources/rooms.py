@@ -1,4 +1,5 @@
 from datetime import date
+from flask_jwt_extended import create_access_token, JWTManager, jwt_required
 from flask_restful import Resource, reqparse
 from flask import jsonify, make_response, request #, abort, g, url_for
 from src.db import get_db
@@ -34,6 +35,7 @@ class Room(Resource):
             message = jsonify(error = 'Something went wrong when getting the specified room. Please try again. Try using quotation marks around the room number in the endpoint if you have not already done so.')
             return make_response(message, 500)
     
+    @jwt_required
     def put(self, room_no):
 
         try:
@@ -68,6 +70,7 @@ class Room(Resource):
             return make_response(message, 500)
     
 
+    @jwt_required
     def delete(self, room_no):
 
         try:
@@ -125,6 +128,7 @@ class Rooms(Resource):
             message = jsonify(error = 'Something went wrong when getting all the rooms. Please try again.')
             return make_response(message, 500)
     
+    @jwt_required
     def post(self):
 
         try: 
