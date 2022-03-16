@@ -120,13 +120,14 @@ class Assignment(Resource):
                 get_db().commit()
 
             if rmid:
-                return({"msg": "hey"})
+                
                 # rmidd = get_db().cursor().execute(f'SELECT * FROM rooms WHERE roomnumber= "{rmid}"').fetchone()
                 # if not rmidd[0]:
                 #     message = jsonify(error = 'Room does not exist. Please provide a valid Room id.')
                 #     return make_response(message, 400)
                 get_db().cursor().execute(f'UPDATE assignments SET roomnumber={rmid} WHERE id={assignid}')
                 get_db().commit()
+                return({"msg": "hey"})
             
             if tkid:
                 # tkidd = get_db().cursor().execute(f'SELECT * FROM tasks WHERE taskid={tkid}').fetchone()
