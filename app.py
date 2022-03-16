@@ -22,6 +22,7 @@ from src.migrate_db import init_db
 import src.const
 from flask import g
 from src.db import get_db
+# Arica: Could comment out Logout, but I left it for now so that I could check if the tokens are being deleted.
 from resources.auth import Login, Logout, Token
 from resources.rooms import Room, Rooms
 # Arica: Import the Tasks and Task classes from the tasks.py file.
@@ -68,21 +69,22 @@ class HelloWorld(Resource):
 #        return f(current_user, *args, **kwargs)
 #    return decorator
 
+# Arica: Added an "s" to the end of every endpoint for consistency.
+# Could comment out Logout, but I left it for now so that I could check if the tokens are being deleted.
 api.add_resource(HelloWorld, '/')
 api.add_resource(User, '/users/<string:user_name>', '/signup')
 api.add_resource(Users, '/users')
 api.add_resource(Login, '/login')
 api.add_resource(Logout,'/logout')
 api.add_resource(Token,'/token')
-api.add_resource(Room, '/room/<string:room_no>', '/room')
+api.add_resource(Room, '/rooms/<string:room_no>', '/room')
 api.add_resource(Rooms, '/rooms')
 api.add_resource(AllStaff, '/staff')
 api.add_resource(Staff, '/staff/<staffid>')
-# Arica: The URLs for the tasks (no ending forward slash).
 api.add_resource(Tasks, '/tasks')
 api.add_resource(Task, '/tasks/<taskid>')
 api.add_resource(Assignments, '/assignments')
-api.add_resource(Assignment, '/assignment/<string:assignid>')
+api.add_resource(Assignment, '/assignments/<string:assignid>')
 
 @app.teardown_appcontext
 def close_connection(exception):

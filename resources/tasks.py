@@ -55,7 +55,7 @@ class Tasks(Resource):
 
             # Arica: Checks to see if a task name was provided.
             if not data['taskname']:
-                message = jsonify(error = 'The task name is required to add a new task. Please add a task name.')
+                message = jsonify(error = 'The task name is required to add a new task. Please provide a task name.')
                 return make_response(message, 400)
 
             # Arica: Checks to see if the task the client wants to add already exists.
@@ -103,7 +103,7 @@ class Task(Resource):
                 message = jsonify(error = 'Could not find the specified task. Please check if the Task ID is typed correctly.')
                 return make_response(message, 404)
 
-            # Arica: Returns the specified tasks and the HTTP code 200 OK.
+            # Arica: Returns the specified task and the HTTP code 200 OK.
             result = get_db().cursor().execute(f'SELECT * FROM tasks WHERE taskid = {taskid}')
             row = result.fetchone()
             get_db().close()
@@ -129,10 +129,10 @@ class Task(Resource):
 
             # Arica: Checks to see if a Task Name was provided.
             if not data['taskname']:
-                message = jsonify(error = 'The task name is required to update a task. Please add a task name.')
+                message = jsonify(error = 'The task name is required to update a task. Please provide a task name.')
                 return make_response(message, 400)
 
-            # Arica: Checks to see if the provided Task ID matches an existing task in the Tasks table.
+            # Arica: Checks to see if the provided Task ID does not match an existing task in the Tasks table.
             if not get_db().cursor().execute(f'SELECT * FROM tasks WHERE taskid = {taskid}').fetchone():
                 get_db().close()
                 message = jsonify(error = 'Could not find the specified task. Please check if the Task ID is typed correctly.')

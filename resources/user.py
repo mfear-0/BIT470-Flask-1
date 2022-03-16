@@ -12,15 +12,21 @@ from werkzeug.security import generate_password_hash,check_password_hash
 
 parser = reqparse.RequestParser()
 
+#TODO: Do the User and Users need PUT and DELETE methods?
+
 class User(Resource): 
 
     def get(self, user_name):
+
+        #TODO: Check for empty input and an input that does not exist. Finalize the error messages.
 
         result = get_db().cursor().execute(f'SELECT * FROM users WHERE username="{user_name}"')
         row = result.fetchone()
         return dict(zip([c[0] for c in result.description], row))
 
     def post(self):
+
+        #TODO: This is the signup. Check for empty input, possibly unique values too. Finalize the error messages.
 
         parser.add_argument('username')
         parser.add_argument('password')
@@ -50,6 +56,8 @@ class Users(Resource):
 
     def get(self):
         
+        #TODO: Like everything else, use a try-except block for server errors.
+
         result = get_db().cursor().execute('SELECT * FROM users')
         rows = result.fetchall()
         get_db().close()
@@ -58,6 +66,8 @@ class Users(Resource):
             response.append(dict(zip([c[0] for c in result.description], row)))
         return response
 
+
+#TODO: Same as everything else. Error trapping, empty input, invalid input, and finalize error messages.
 
 class Staff(Resource): 
 
@@ -116,6 +126,8 @@ class Staff(Resource):
         except:
             message = jsonify(error = 'Something went wrong when deleting the staff. Please try again.')
             return make_response(message, 500)
+
+# Arica: It sounds like no POST method is needed here because a staff member is automatically created when going through the signup process (POSTing a User).
 
 class AllStaff(Resource):
 

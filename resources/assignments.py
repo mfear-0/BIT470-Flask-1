@@ -1,4 +1,3 @@
-
 from datetime import date
 import json
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token
@@ -28,13 +27,14 @@ class Assignments(Resource):
 
         except:
 
-            message = jsonify(error = 'Something went wrong when getting your assignments. Please try again.')
+            message = jsonify(error = 'Something went wrong when getting all the assignments. Please try again.')
             return make_response(message, 500)
-
 
     def post(self):   
 
         try:
+
+            #TODO: Check for empty input before checking if the values exist. Finalize the error messages.
                      
             parser.add_argument('staffid')
             parser.add_argument('taskid')
@@ -58,14 +58,13 @@ class Assignments(Resource):
             if not st:
                 message = jsonify(error = 'Please the status of your assignment')
                 return make_response(message, 404)
-
-            get_db().cursor().execute(f'INSERT INTO assignments(staffid, roomnumber, taskid, iscompleted) VALUES({staffid}, "{roomno}", {taskid}, {st})')
+            get_db().cursor().execute(f'INSERT INTO assignments(staffid, taskid, roomnumber, status) VALUES({staffid}, {taskid}, "{roomno}", "{st}")')
             get_db().commit()
             get_db().close()
             message = jsonify(message = 'Assignment successfully added.')
             return make_response(message, 200) 
         except:
-            message = jsonify(error = 'Something went wrong when creating the assignment. Please try again later.')
+            message = jsonify(error = 'Something went wrong when creating the assignment. Please try again.')
             return make_response(message, 500)
 
 
@@ -77,7 +76,7 @@ class Assignment(Resource):
 
             if not get_db().cursor().execute(f'SELECT * FROM assignments WHERE id = {assignid}').fetchone():
                 get_db().close()
-                message = jsonify(error = 'Could not find the specified assignment.')
+                message = jsonify(error = 'Could not find the specified assignment. Please check if the Assignment ID is typed correctly.')
                 return make_response(message, 404)
 
             result = get_db().cursor().execute(f'SELECT * FROM assignments WHERE id = {assignid}')
@@ -88,6 +87,7 @@ class Assignment(Resource):
             return make_response(response, 200)
 
         except:
+
             message = jsonify(error = 'Something went wrong when getting the specified assignment. Please try again.')
             return make_response(message, 500)
 
@@ -95,6 +95,9 @@ class Assignment(Resource):
     def put(self, assignid):
 
         try:
+
+            #TODO: Check for empty input before checking if the values exist. Finalize the error messages.
+
             parser.add_argument('staffid')
             parser.add_argument('roomnumber')
             parser.add_argument('taskid')
@@ -136,8 +139,9 @@ class Assignment(Resource):
             result = get_db().cursor().execute(f'SELECT * FROM assignments WHERE id={assignid}')
             row = result.fetchone()
             return dict(zip([c[0] for c in result.description], row))
+
         except:
-            message = jsonify(error = 'Something went wrong when creating the assignment. Please try again later.')
+            message = jsonify(error = 'Something went wrong when editing the assignment. Please try again.')
             return make_response(message, 500)
     
 
@@ -145,16 +149,24 @@ class Assignment(Resource):
     def delete(self, assignid):
 
         try:
+
             if not get_db().cursor().execute(f'SELECT * FROM assignments WHERE id={assignid}').fetchone():
                 get_db().close()
-                message = jsonify(error = 'The assignment does not exist.')
-                return make_response(message, 400)
+                message = jsonify(error = 'Could not find the specified assignment. Please check if the Assignment ID is typed correctly.')
+                return make_response(message, 404)
+
+            # Arica: Deletes the assignment that matches the provided Assignment ID and returns the HTTP code 200 OK.
+            # Normally, we would want to return the name of the item to the user so they know what item they deleted. But since the assignments
+            # do not have a name, we are going to return the Assignment ID instead.
 
             get_db().cursor().execute(f'DELETE FROM assignments WHERE id = {assignid}')
             get_db().commit()
             get_db().close()
-            message = jsonify(message = f'The assignment has been successfully deleted.')
+
+            message = jsonify(message = f'The assignment \'{assignid}\' has been successfully deleted.')
             return make_response(message, 200) 
+
         except:
+
             message = jsonify(error = 'Something went wrong when deleting the assignment. Please try again.')
             return make_response(message, 500)
