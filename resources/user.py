@@ -11,7 +11,7 @@ from werkzeug.security import generate_password_hash,check_password_hash
 #from passlib.apps import custom_app_context as pwd_context
 #from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
 
-parser = reqparse.RequestParser()
+parser = reqparse.RequestParser() 
 
 #TODO: Do the User and Users need PUT and DELETE methods?
 
