@@ -109,6 +109,7 @@ class Assignment(Resource):
             rmid = data['roomnumber']
             tkid = data['taskid']
             st = data['status']
+            assignid = int(assignid)
 
             if stid:
                 stidd = get_db().cursor().execute(f'SELECT * FROM staff WHERE staffid={stid}').fetchone()
