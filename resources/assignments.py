@@ -120,6 +120,7 @@ class Assignment(Resource):
                 get_db().commit()
 
             if rmid:
+                return({"hey"})
                 # rmidd = get_db().cursor().execute(f'SELECT * FROM rooms WHERE roomnumber= "{rmid}"').fetchone()
                 # if not rmidd[0]:
                 #     message = jsonify(error = 'Room does not exist. Please provide a valid Room id.')
