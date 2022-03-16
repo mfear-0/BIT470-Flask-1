@@ -51,8 +51,8 @@ class Assignments(Resource):
             data = parser.parse_args()
             staffid = data['staffid'] 
             roomno = data['roomnumber'] 
-            taskid = data['status']
-            st = data['iscompleted']
+            taskid = data['taskid']
+            st = data['status']
             if not get_db().cursor().execute(f'SELECT * FROM staff WHERE staffid = "{staffid}"').fetchone():
                 message = jsonify(error = 'Staff member of that id does not exist.')
                 return make_response(message, 404)
