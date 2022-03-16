@@ -170,10 +170,17 @@ class Task(Resource):
             # Arica: Deletes the task that matches the provided Task ID and returns the HTTP code 200 OK.
             # The following two lines of code are to save the Task Name from the database and then convert that result's tuple into a string,
             # so that when the task is deleted, the return message displays the name of the task for clarity to the user.
+
             taskname = get_db().cursor().execute(f'SELECT taskname FROM tasks WHERE taskid = {taskid}').fetchone()
             taskname = ''.join(taskname)
             get_db().cursor().execute(f'DELETE FROM tasks WHERE taskid = {taskid}')
             get_db().commit()
+
+            # this will also delete assignments that have the task id from the assignment table
+            if get_db().cursor().execute(f'SELECT * FROM assignments WHERE taskid = {taskid}').fetchone():
+                get_db().cursor().execute(f'DELETE FROM assignments WHERE taskid = {taskid}')
+                get_db().commit()
+
             get_db().close()
             message = jsonify(message = f'The task \'{taskname}\' has been successfully deleted.')
             return make_response(message, 200)       

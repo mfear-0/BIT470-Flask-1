@@ -4,7 +4,7 @@
 from datetime import date
 from tkinter import INSERT
 from flask_restful import Resource, reqparse
-from flask import jsonify#, request, abort, g, url_for
+from flask import Flask, jsonify, make_response, request
 from src.db import get_db
 from werkzeug.security import generate_password_hash,check_password_hash
 #from passlib.apps import custom_app_context as pwd_context
@@ -99,6 +99,23 @@ class Staff(Resource):
         result = get_db().cursor().execute(f'SELECT * FROM staff WHERE staffid={staffid}')
         row = result.fetchone()
         return dict(zip([c[0] for c in result.description], row))
+
+    def delete(self, staffid):
+
+        try:
+            if not get_db().cursor().execute(f'SELECT * FROM staff WHERE staffid={staffid}').fetchone():
+                get_db().close()
+                message = jsonify(error = 'This staff member does not exist.')
+                return make_response(message, 400)
+
+            get_db().cursor().execute(f'DELETE FROM staff WHERE id = {staffid}')
+            get_db().commit()
+            get_db().close()
+            message = jsonify(message = f'Staff has been successfully deleted.')
+            return make_response(message, 200) 
+        except:
+            message = jsonify(error = 'Something went wrong when deleting the staff. Please try again.')
+            return make_response(message, 500)
 
 class AllStaff(Resource):
 
