@@ -145,11 +145,11 @@ class Assignment(Resource):
                 get_db().commit()
                 get_db().close()
 
-            # result = get_db().cursor().execute(f'SELECT * FROM assignments WHERE id={assignid2}')
-            # row = result.fetchone()
-            # return dict(zip([c[0] for c in result.description], row))
-            message = jsonify(message = 'Successfully edited the assignment.')
-            return make_response(message, 200)
+            result = get_db().cursor().execute(f'SELECT * FROM assignments WHERE id={assignid2}')
+            row = result.fetchone()
+            return dict(zip([c[0] for c in result.description], row))
+            # message = jsonify(message = 'Successfully edited the assignment.')
+            # return make_response(message, 200)
 
         except:
             message = jsonify(error = 'Something went wrong when editing the assignment. Please try again.')
