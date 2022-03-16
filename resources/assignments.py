@@ -30,6 +30,7 @@ class Assignments(Resource):
             message = jsonify(error = 'Something went wrong when getting all the assignments. Please try again.')
             return make_response(message, 500)
 
+    @jwt_required
     def post(self):   
 
         try:
@@ -56,7 +57,7 @@ class Assignments(Resource):
                 message = jsonify(error = 'Task of that id does not exist.')
                 return make_response(message, 404)
             if not st:
-                message = jsonify(error = 'Please the status of your assignment')
+                message = jsonify(error = 'Please state the status of your assignment')
                 return make_response(message, 404)
             get_db().cursor().execute(f'INSERT INTO assignments(staffid, taskid, roomnumber, status) VALUES({staffid}, {taskid}, "{roomno}", "{st}")')
             get_db().commit()
@@ -92,6 +93,7 @@ class Assignment(Resource):
             return make_response(message, 500)
 
 
+    @jwt_required
     def put(self, assignid):
 
         try:
