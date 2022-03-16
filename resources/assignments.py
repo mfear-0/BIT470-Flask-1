@@ -112,29 +112,29 @@ class Assignment(Resource):
 
 
             if stid:
-                # stidd = get_db().cursor().execute(f'SELECT * FROM staff WHERE staffid={stid}').fetchone()
-                # if not stidd[0]:
-                #     message = jsonify(error = 'staff does not exist. Please provide a valid staff id.')
-                #     return make_response(message, 400)
+                stidd = get_db().cursor().execute(f'SELECT * FROM staff WHERE staffid={stid}').fetchone()
+                if not stidd[0]:
+                    message = jsonify(error = 'staff does not exist. Please provide a valid staff id.')
+                    return make_response(message, 400)
                 get_db().cursor().execute(f'UPDATE assignments SET staffid={stid} WHERE id={assignid}')
                 get_db().commit()
 
 
             if rmid:
                 
-                # rmidd = get_db().cursor().execute(f'SELECT * FROM rooms WHERE roomnumber= "{rmid}"').fetchone()
-                # if not rmidd[0]:
-                #     message = jsonify(error = 'Room does not exist. Please provide a valid Room id.')
-                #     return make_response(message, 400)
+                rmidd = get_db().cursor().execute(f'SELECT * FROM rooms WHERE roomnumber= "{rmid}"').fetchone()
+                if not rmidd[0]:
+                    message = jsonify(error = 'Room does not exist. Please provide a valid Room id.')
+                    return make_response(message, 400)
                 get_db().cursor().execute(f'UPDATE assignments SET roomnumber="{rmid}" WHERE id={assignid}')
                 get_db().commit()
 
             
             if tkid:
-                # tkidd = get_db().cursor().execute(f'SELECT * FROM tasks WHERE taskid={tkid}').fetchone()
-                # if not tkidd[0]:
-                #     message = jsonify(error = 'Task does not exist. Please provide a valid Task id.')
-                #     return make_response(message, 400)
+                tkidd = get_db().cursor().execute(f'SELECT * FROM tasks WHERE taskid={tkid}').fetchone()
+                if not tkidd[0]:
+                    message = jsonify(error = 'Task does not exist. Please provide a valid Task id.')
+                    return make_response(message, 400)
                 get_db().cursor().execute(f'UPDATE assignments SET taskid={tkid} WHERE id={assignid}')
                 get_db().commit()
 
