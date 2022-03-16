@@ -145,7 +145,7 @@ class Assignment(Resource):
                 get_db().commit()
                 get_db().close()
 
-            result = get_db().cursor().execute(f'SELECT * FROM assignments WHERE id={assignid2}')
+            result = get_db().cursor().execute(f'SELECT * FROM assignments WHERE id={assignid}')
             row = result.fetchone()
             return dict(zip([c[0] for c in result.description], row))
             # message = jsonify(message = 'Successfully edited the assignment.')
