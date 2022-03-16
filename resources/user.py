@@ -162,6 +162,9 @@ class Staff(Resource):
     def get(self, staffid):
 
         result = get_db().cursor().execute(f'SELECT * FROM staff WHERE staffid={staffid}')
+        if result is None:
+            message = jsonify(error = 'Please enter a valid staff id.')
+            return make_response(message, 500)
         row = result.fetchone()
         return dict(zip([c[0] for c in result.description], row))
 
