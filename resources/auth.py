@@ -18,7 +18,6 @@ from resources.user import Users
 parser = reqparse.RequestParser()
 
 
-
 class Login(Resource):
 
     def post(self):
@@ -67,27 +66,48 @@ class Login(Resource):
             con.close()
 
             if check_password_hash(respw[0], pw):
+
+                # Arica: Instead of just returning a message saying the user is already logged in,
+                # we now create and return a new token. Initially, this was in a try-except block.
+                # However, since we want to create a new token every time the user logs in, we do not
+                # care if they were already logged in. We just send them a new token.
+
+                exp = datetime.timedelta(minutes=45)
+                token = create_access_token(identity=str(res[0]), expires_delta=exp)
+                get_db().cursor().execute(f'INSERT INTO token(id, tokenid) VALUES({res[0]},"{token}")')
+                get_db().commit()
+                get_db().close()
+                message = jsonify(token = token)
+                return make_response(message, 200)
+
+                # Original code: 
                 # try block to catch users already logged in.
-                try:
-                    isloggedin = get_db().cursor().execute(f'SELECT id FROM token WHERE id = "{res[0]}"').fetchone()
-                    if not isloggedin[0] is None:
-                        message = jsonify(message = 'User is already logged in.')
-                        return make_response(message, 400)
-                except:
-                    exp = datetime.timedelta(minutes=45)
-                    token = create_access_token(identity=str(res[0]), expires_delta=exp)
-                    get_db().cursor().execute(f'INSERT INTO token(id, tokenid) VALUES({res[0]},"{token}")')
-                    get_db().commit()
-                    # Arica: Returns a successful login message. I removed the token to test it out.
-                    # When the token is not returned, I can log in. If it returns the token, I get a 500 error message.
-                    # Does the token need to be returned? Does the user need to see it?
-                    message = jsonify(token = token)
-                    return make_response(message, 200)
-                    # Original code: 
-                    # return jsonify({'token': token}, 201)
-                    # Originally commented out: 
-                    # access_token = create_access_token(identity=un)
-                    # return jsonify({'token': access_token}, 200)
+                # try:
+
+                #     isloggedin = get_db().cursor().execute(f'SELECT id FROM token WHERE id = "{res[0]}"').fetchone()
+
+                #     if not isloggedin[0] is None:
+
+                #         # message = jsonify(message = 'User is already logged in.')
+                #         # return make_response(message, 400)
+                
+                # except:
+
+                #     exp = datetime.timedelta(minutes=45)
+                #     token = create_access_token(identity=str(res[0]), expires_delta=exp)
+                #     get_db().cursor().execute(f'INSERT INTO token(id, tokenid) VALUES({res[0]},"{token}")')
+                #     get_db().commit()
+                #     get_db().close()
+                #     # Arica: No longer returns a successful login message, just the 200 HTTP code. Instead, the 
+                #     # token is returned. The make_response method can only accept one argument and the code, unless
+                #     # you made it a tuple by passing in some headers information, according to my internet research.
+                #     message = jsonify(token = token)
+                #     return make_response(message, 200)
+                #     # Original code: 
+                #     # return jsonify({'token': token}, 201)
+                #     # Originally commented out: 
+                #     # access_token = create_access_token(identity=un)
+                #     # return jsonify({'token': access_token}, 200)
 
             get_db().close()
 
@@ -104,6 +124,7 @@ class Login(Resource):
 
 
 #TODO: For the future, we might want adjust the logout to check against the login token and not the username. 
+# Arica: Could comment out Logout, but I left it for now so that I could check if the tokens are being deleted.
 
 class Logout(Resource):
 
