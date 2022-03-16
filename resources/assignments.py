@@ -113,7 +113,7 @@ class Assignment(Resource):
 
             if stid:
                 stidd = get_db().cursor().execute(f'SELECT * FROM staff WHERE staffid={stid}').fetchone()
-                if stidd[0] is None:
+                if stidd is None:
                     message = jsonify(error = 'staff does not exist. Please provide a valid staff id.')
                     return make_response(message, 400)
                 get_db().cursor().execute(f'UPDATE assignments SET staffid={stid} WHERE id={assignid}')
@@ -123,7 +123,7 @@ class Assignment(Resource):
             if rmid:
                 
                 rmidd = get_db().cursor().execute(f'SELECT * FROM rooms WHERE roomnumber= "{rmid}"').fetchone()
-                if rmidd[0] is None:
+                if rmidd is None:
                     message = jsonify(error = 'Room does not exist. Please provide a valid Room id.')
                     return make_response(message, 400)
                 get_db().cursor().execute(f'UPDATE assignments SET roomnumber="{rmid}" WHERE id={assignid}')
@@ -132,7 +132,7 @@ class Assignment(Resource):
             
             if tkid:
                 tkidd = get_db().cursor().execute(f'SELECT * FROM tasks WHERE taskid={tkid}').fetchone()
-                if tkidd[0] is None:
+                if tkidd is None:
                     message = jsonify(error = 'Task does not exist. Please provide a valid Task id.')
                     return make_response(message, 400)
                 get_db().cursor().execute(f'UPDATE assignments SET taskid={tkid} WHERE id={assignid}')
