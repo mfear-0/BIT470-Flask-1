@@ -109,7 +109,7 @@ class Assignment(Resource):
             rmid = data['roomnumber']
             tkid = data['taskid']
             st = data['status']
-            #assignid2 = int(assignid)
+
 
             if stid:
                 # stidd = get_db().cursor().execute(f'SELECT * FROM staff WHERE staffid={stid}').fetchone()
@@ -126,7 +126,7 @@ class Assignment(Resource):
                 # if not rmidd[0]:
                 #     message = jsonify(error = 'Room does not exist. Please provide a valid Room id.')
                 #     return make_response(message, 400)
-                get_db().cursor().execute(f'UPDATE assignments SET roomnumber={rmid} WHERE id={assignid}')
+                get_db().cursor().execute(f'UPDATE assignments SET roomnumber="{rmid}" WHERE id={assignid}')
                 get_db().commit()
                 get_db().close()
                 #return({"msg": "hey"})
