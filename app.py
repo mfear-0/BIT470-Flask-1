@@ -37,8 +37,8 @@ api = Api(app)
 bcrypt = Bcrypt(app)
 
 # Arica: Configuring the application.
-app.config.from_envvar('ENV_FILE_LOCATION')
-app.config['SECRET_KEY'] = 'somesecretkeything'
+#app.config.from_envvar('ENV_FILE_LOCATION')
+app.config['JWT_SECRET_KEY'] = 'something'
 app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///example.db'
 
 # Arica: The JWTManager object.
