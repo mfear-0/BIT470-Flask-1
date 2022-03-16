@@ -1,6 +1,7 @@
 
 from datetime import date
 import json
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token
 from flask_restful import Resource, reqparse
 from flask import Flask, jsonify, make_response, request
 from src.db import get_db
@@ -15,15 +16,7 @@ class Assignments(Resource):
 
         try:
 
-            # TODO: check against user who is logged in. Show them only their assignments. 
-            # get current logged in users token
-            # curUser = get_db().cursor().execute(f'SELECT id FROM token WHERE tokenid = "{loggedTokenid}"')
-            # curStaff = get_db().cursor().execute(f'SELECT staffid FROM staff WHERE id = "{curUser}"')
-            # result = get_db().cursor().execute(f'SELECT * FROM assignments WHERE staffid = "{curStaff}"')
-
-            #remove this line once above is implemented.
             result = get_db().cursor().execute(f'SELECT * FROM assignments')
-            #remove this line once above is implemented.
 
             rows = result.fetchall()
             get_db().close()
@@ -148,6 +141,7 @@ class Assignment(Resource):
             return make_response(message, 500)
     
 
+    @jwt_required
     def delete(self, assignid):
 
         try:

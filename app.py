@@ -6,7 +6,8 @@
 # https://dev.to/imdhruv99/flask-user-authentication-with-jwt-2788
 
 from flask import Flask, jsonify, make_response, request
-from flask_jwt_extended import JWTManager
+from flask_bcrypt import Bcrypt
+from flask_jwt_extended import create_access_token, JWTManager, jwt_required
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
@@ -32,8 +33,10 @@ app = Flask(__name__)
 
 # Arica: An object of the Api class.
 api = Api(app)
+bcrypt = Bcrypt(app)
 
 # Arica: Configuring the application.
+app.config.from_envvar('ENV_FILE_LOCATION')
 app.config['SECRET_KEY'] = 'somesecretkeything'
 app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///example.db'
 

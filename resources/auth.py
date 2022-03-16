@@ -4,6 +4,7 @@
 import re
 from flask_restful import Resource
 from flask import Flask, jsonify, make_response, request
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token
 from flask_restful import Resource, reqparse
 from functools import wraps
 from src.db import get_db
@@ -17,16 +18,6 @@ from resources.user import Users
 parser = reqparse.RequestParser()
 
 
-# Arica: Does this need to be implemented? 
-# class Signup(Resource):
-
-#     def post(self, credentials):
-
-#         return 'signing up'
-
-
-# TODO: Might need to program what should happen if a user calls login while
-# they are already logged in.
 
 class Login(Resource):
 
@@ -83,13 +74,14 @@ class Login(Resource):
                         message = jsonify(message = 'User is already logged in.')
                         return make_response(message, 400)
                 except:
-                    token = jwt.encode({'id' : res[0], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=45)}, "somesecretkeything", "HS256")
+                    exp = datetime.timedelta(minutes=45)
+                    token = create_access_token(identity=str(res[0]), expires_delta=exp)
                     get_db().cursor().execute(f'INSERT INTO token(id, tokenid) VALUES({res[0]},"{token}")')
                     get_db().commit()
                     # Arica: Returns a successful login message. I removed the token to test it out.
                     # When the token is not returned, I can log in. If it returns the token, I get a 500 error message.
                     # Does the token need to be returned? Does the user need to see it?
-                    message = jsonify(message = 'Successfully logged in. Welcome!')
+                    message = jsonify(token = token)
                     return make_response(message, 200)
                     # Original code: 
                     # return jsonify({'token': token}, 201)
