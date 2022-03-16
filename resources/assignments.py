@@ -109,15 +109,16 @@ class Assignment(Resource):
             rmid = data['roomnumber']
             tkid = data['taskid']
             st = data['status']
-            #assignid = int(assignid)
+            assignid2 = int(assignid)
 
             if stid:
                 # stidd = get_db().cursor().execute(f'SELECT * FROM staff WHERE staffid={stid}').fetchone()
                 # if not stidd[0]:
                 #     message = jsonify(error = 'staff does not exist. Please provide a valid staff id.')
                 #     return make_response(message, 400)
-                get_db().cursor().execute(f'UPDATE assignments SET staffid={stid} WHERE id={assignid}')
+                get_db().cursor().execute(f'UPDATE assignments SET staffid={stid} WHERE id={assignid2}')
                 get_db().commit()
+                get_db().close()
 
             if rmid:
                 
@@ -125,8 +126,9 @@ class Assignment(Resource):
                 # if not rmidd[0]:
                 #     message = jsonify(error = 'Room does not exist. Please provide a valid Room id.')
                 #     return make_response(message, 400)
-                get_db().cursor().execute(f'UPDATE assignments SET roomnumber={rmid} WHERE id={assignid}')
+                get_db().cursor().execute(f'UPDATE assignments SET roomnumber={rmid} WHERE id={assignid2}')
                 get_db().commit()
+                get_db().close()
                 return({"msg": "hey"})
             
             if tkid:
@@ -134,14 +136,16 @@ class Assignment(Resource):
                 # if not tkidd[0]:
                 #     message = jsonify(error = 'Task does not exist. Please provide a valid Task id.')
                 #     return make_response(message, 400)
-                get_db().cursor().execute(f'UPDATE assignments SET taskid={tkid} WHERE id={assignid}')
+                get_db().cursor().execute(f'UPDATE assignments SET taskid={tkid} WHERE id={assignid2}')
                 get_db().commit()
+                get_db().close()
 
             if st:
-                get_db().cursor().execute(f'UPDATE assignments SET status="{st}" WHERE id={assignid}')
+                get_db().cursor().execute(f'UPDATE assignments SET status="{st}" WHERE id={assignid2}')
                 get_db().commit()
+                get_db().close()
 
-            result = get_db().cursor().execute(f'SELECT * FROM assignments WHERE id={assignid}')
+            result = get_db().cursor().execute(f'SELECT * FROM assignments WHERE id={assignid2}')
             row = result.fetchone()
             return dict(zip([c[0] for c in result.description], row))
 
